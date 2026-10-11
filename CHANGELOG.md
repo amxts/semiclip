@@ -2,14 +2,13 @@
 
 ## v0.1.3
 
+> ReSemiclip for amxts 0.2 and 0.3.
+
+This release only widens the core it works with to `@amxts/core` `^0.2.2 || ^0.3.0`, so it can be upgraded together with your project. Nothing else changes. Its prebuilt plugin is built for 0.3; a 0.2 project compiles it once.
+
+### 👉 Changelog
+
 [compare changes](https://github.com/amxts/resemiclip/compare/v0.1.2...v0.1.3)
-
-### Summary
-
-Runs on amxts 0.2 and 0.3: `@amxts/core` `^0.2.2 || ^0.3.0`. Nothing else changed; its prebuilt plugin is 0.3's, and a 0.2 project compiles it once.
-
-### 📖 Documentation
-
 
 ### ❤️ Contributors
 
