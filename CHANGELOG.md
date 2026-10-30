@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.2.1
+
+> For the 0.3.4 core and the later cores of the 0.3 line.
+
+Installed, semiclip now reaches the server with no plugin of yours: it says `standalone: true`, and a 0.3.4 core builds it whenever `amxts.config.ts` lists it. Teammates walk through each other, and a partner is see-through up close, from `npx amxts module add semiclip` on. Before, the build left it out until some plugin used `semiclip`.
+
+### 👉 Changelog
+
+[compare changes](https://github.com/amxts/semiclip/compare/v0.2.0...v0.2.1)
+
+### 🚀 Enhancements
+
+- Semiclip is built with no plugin using it ([1651d09](https://github.com/amxts/semiclip/commit/1651d09))
+
+### ❤️ Contributors
+
+- Ernest Manukyan ([@kukson777](https://github.com/kukson777))
+
 ## v0.2.0
 
 > For the 0.3.3 core and the later cores of the 0.3 line.
