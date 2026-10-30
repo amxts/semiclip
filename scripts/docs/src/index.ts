@@ -33,14 +33,16 @@ export default {
 	'Semiclip.rule': {
 		en: `
 			Whether \`player\` walks through \`target\`; a pair walks through when either
-			way says so. Setting it works every pair out; \`null\` makes everyone solid
-			again. The pairs are worked out again when a player comes, spawns, dies or
+			way says so. Until a plugin sets it, teammates walk through each other.
+			Setting it works every pair out; \`null\` makes everyone solid again, and the
+			rule of a plugin that stops goes back to teammates. The pairs are worked out again when a player comes, spawns, dies or
 			changes sides, and when a field plugins added to \`Player\` changes.
 		`,
 		ru: `
 			Проходит ли \`player\` сквозь \`target\`; пара проходит, когда это разрешает
-			хотя бы одна сторона. Присваивание рассчитывает каждую пару; \`null\` снова
-			делает всех твёрдыми. Пары рассчитываются заново, когда игрок заходит,
+			хотя бы одна сторона. Пока плагин его не задал, друг сквозь друга проходят
+			союзники. Присваивание рассчитывает каждую пару; \`null\` снова делает всех
+			твёрдыми, а правило остановленного плагина снова сменяется союзниками. Пары рассчитываются заново, когда игрок заходит,
 			появляется, умирает или меняет команду и когда меняется поле, которое плагины
 			добавили в \`Player\`.
 		`,

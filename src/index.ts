@@ -11,6 +11,8 @@ export default defineModule({
 	meta: { name: "semiclip" },
 	imports: [{ from: "@amxts/semiclip", name: "semiclip" }],
 	setup() {
+		// The look until a plugin sets its own: see-through up close, not drawn right against him.
+		server.walkThroughLook = { fadeDistance: 250, opacity: 0.4, hideDistance: 48 };
 		server.addEventListener("init", start);
 		server.addEventListener("putInServer", joined);
 		server.addMessageListener("team", teamChanged);
@@ -27,8 +29,11 @@ export default defineModule({
  */
 export type SemiclipRule = (player: Player, target: Player) => boolean;
 
-let current: SemiclipRule | null = null;
-/** The plugin that set the rule, as `callingPlugin()` numbers it. */
+/** The rule until a plugin sets one: teammates walk through each other. */
+const teammates: SemiclipRule = (player, target) => player.team == target.team;
+
+let current: SemiclipRule | null = teammates;
+/** The plugin that set the rule, as `callingPlugin()` numbers it; 0 for the module's own. */
 let currentFrom = 0;
 
 /** The server is up. A rule set while the plugins are still loading waits for it. */
@@ -45,8 +50,9 @@ let started = false;
 export class Semiclip {
 	/**
 	 * Whether `player` walks through `target`; a pair walks through when either
-	 * way says so. Setting it works every pair out; `null` makes everyone solid
-	 * again. The pairs are worked out again when a player comes, spawns, dies or
+	 * way says so. Until a plugin sets it, teammates walk through each other.
+	 * Setting it works every pair out; `null` makes everyone solid again, and the
+	 * rule of a plugin that stops goes back to teammates. The pairs are worked out again when a player comes, spawns, dies or
 	 * changes sides, and when a field plugins added to `Player` changes.
 	 */
 	get rule() {
@@ -54,7 +60,7 @@ export class Semiclip {
 	}
 
 	set rule(rule: SemiclipRule | null) {
-		if (rule != null && current != null && rule != current) console.warn("[semiclip] a rule was set over another one: the last one set is used");
+		if (rule != null && currentFrom != 0 && current != null && rule != current) console.warn("[semiclip] a rule was set over another one: the last one set is used");
 		const had = current != null;
 		current = rule;
 		currentFrom = callingPlugin();
@@ -79,11 +85,12 @@ export class Semiclip {
 /** Who walks through whom: the rule, and the pairs worked out again. */
 export const semiclip = new Semiclip();
 
-/** The plugin that set the rule stopped: its rule goes, and with it its pairs. */
+/** The plugin that set the rule stopped: its rule goes, and the module's own, teammates, comes back. */
 function stopped(plugin: number) {
-	if (current == null || currentFrom != plugin) return;
-	current = null;
-	if (started) clearAll();
+	if (currentFrom == 0 || currentFrom != plugin) return;
+	current = teammates;
+	currentFrom = 0;
+	if (started) updateAll(teammates);
 }
 
 function start() {

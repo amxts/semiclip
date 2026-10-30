@@ -96,17 +96,34 @@ describe("semiclip", () => {
 		expect(server.walksThrough(carl.id)).toEqual([alice.id]);
 	}, 120_000);
 
-	it("the plugin that set the rule stops: its pairs go; loaded again, it sets the rule once more", async () => {
+	it("the plugin that set the rule stops: the module's own rule, teammates, comes back; loaded again, it sets its rule once more", async () => {
 		const server = await setup({ rootDir: "playground" });
 		const alice = server.join("Alice");
 		const bob = server.join("Bob");
+		const carl = server.join("Carl", { team: "TERRORIST" });
 		const protection = server.plugins.find(plugin => plugin.source.endsWith("spawn-protection.ts"))!;
+		server.fireHook("spawn", [carl.id]);
+		expect(server.walksThrough(carl.id)).toEqual([alice.id, bob.id]);
 
 		server.unload(protection);
-		expect(server.walksThrough(alice.id)).toEqual([]);
+		expect(server.walksThrough(carl.id)).toEqual([]);
+		expect(server.walksThrough(alice.id)).toEqual([bob.id]);
 
 		await server.load(protection.source);
-		expect(server.walksThrough(alice.id)).toEqual([bob.id]);
+		// Its rule again: Carl, protected since his spawn, walks through everyone alive.
+		expect(server.walksThrough(carl.id)).toEqual([alice.id, bob.id]);
 		expect(server.log).not.toContain("a rule was set over another one");
+	}, 120_000);
+
+	it("with no plugin's rule, teammates walk through each other, and the look is on", async () => {
+		const server = await setup({ rootDir: "playground" });
+		server.unload(server.plugins.find(plugin => plugin.source.endsWith("spawn-protection.ts"))!);
+		const alice = server.join("Alice");
+		const bob = server.join("Bob");
+		const carl = server.join("Carl", { team: "TERRORIST" });
+
+		expect(server.walksThrough(alice.id)).toEqual([bob.id]);
+		expect(server.walksThrough(carl.id)).toEqual([]);
+		expect(server.walkThroughLook).toEqual({ fadeDistance: 250, opacity: 0.4, hideDistance: 48 });
 	}, 120_000);
 });

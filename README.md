@@ -19,6 +19,7 @@ Semiclip lets players walk through each other. amxts does it on the server itsel
 
 ## Features
 
+- **Works as soon as it is installed.** Teammates walk through each other, see-through up close and not drawn right against you, before any plugin says a word.
 - **A rule, not pairs by hand.** One function says whether one player walks through another; the module works every pair out.
 - **Kept up to date by itself.** A spawn, a death, a team change, a player coming in, and a change of any field plugins add to `Player` work the pairs out again - only the pairs of the player it happened to.
 - **Nothing else on the server.** No AMX Mod X module is needed: the pairs are amxts's own.
@@ -44,13 +45,13 @@ export default defineConfig({
 
 A plugin uses the module as `semiclip`, without an import line: the build adds the import to the plugins that use it, and builds the module only when some plugin does.
 
-Teammates walk through each other:
+Installed, the module needs no plugin: teammates walk through each other, and a partner is see-through closer than 250 units and not drawn closer than 48 (the core's [`server.walkThroughLook`](#how-a-partner-looks)). A plugin changes who walks through whom with a rule - everyone through everyone, on a KZ server:
 
 ```ts
-semiclip.rule = (player, target) => player.team == target.team;
+semiclip.rule = () => true;
 ```
 
-Setting the rule is all it takes: the module works every pair out, and works a player's pairs out again when he spawns, dies, changes sides or comes in. `semiclip.rule = null` makes everyone solid again, and so does the plugin that set the rule stopping - unloaded or reloaded - until a rule is set again.
+Setting the rule is all it takes: the module works every pair out, and works a player's pairs out again when he spawns, dies, changes sides or comes in. `semiclip.rule = null` makes everyone solid; when the plugin that set the rule stops - unloaded or reloaded - teammates walk through each other again, until a rule is set again.
 
 ### A rule that changes in play
 
@@ -115,13 +116,13 @@ const partners = [...player.walksThrough];
 
 ### How a partner looks
 
-A player one walks through can be see-through up close, or not drawn at all, so he does not block the view. That is the core's `server.walkThroughLook`, for every player and off by default:
+A player one walks through can be see-through up close, or not drawn at all, so he does not block the view. That is the core's `server.walkThroughLook`, for every player: off in the core, and the module turns it on as below. A plugin sets its own, or `{ fadeDistance: 0, hideDistance: 0 }` to turn it off:
 
 ```ts
 server.walkThroughLook = {
 	fadeDistance: 250,  // closer than 250 units a partner is see-through
 	opacity: 0.4,       // 40% opaque right up close, whole at 250
-	hideDistance: 32,   // closer than 32 units he is not drawn at all, and no target of your aim
+	hideDistance: 48,   // closer than 48 units he is not drawn at all, and no target of your aim
 };
 ```
 
