@@ -29,14 +29,14 @@ Semiclip lets players walk through each other. amxts does it on the server itsel
 The project needs `@amxts/core` 0.3.3 or later.
 
 ```bash
-npx amxts module add resemiclip
+npx amxts module add semiclip
 ```
 
 It installs the package and adds it to your project's `amxts.config.ts`:
 
 ```ts
 export default defineConfig({
-	modules: ["@amxts/resemiclip"],
+	modules: ["@amxts/semiclip"],
 });
 ```
 
@@ -105,10 +105,12 @@ server.addCommand("/party", () => {
 
 ### Who walks through whom now
 
-The pairs are the core's: `player.walksThrough.has(other)` says whether the two walk through each other, and the list is
+The pairs are the core's: `player.walksThrough` is the players he walks through, as a `Set`:
 
 ```ts
-const partners = server.players.filter(other => player.walksThrough.has(other));
+player.walksThrough.has(other);                  // whether the two walk through each other
+for (const partner of player.walksThrough) { }   // each of them
+const partners = [...player.walksThrough];
 ```
 
 ### How a partner looks
@@ -116,13 +118,15 @@ const partners = server.players.filter(other => player.walksThrough.has(other));
 A player one walks through can be see-through up close, or not drawn at all, so he does not block the view. That is the core's `server.walkThroughLook`, for every player and off by default:
 
 ```ts
-server.walkThroughLook.fadeDistance = 250;  // closer than 250 units a partner is see-through
-server.walkThroughLook.opacity = 0.4;       // 40% opaque right up close, whole at 250
-server.walkThroughLook.hideDistance = 32;   // closer than 32 units he is not drawn at all
+server.walkThroughLook = {
+	fadeDistance: 250,  // closer than 250 units a partner is see-through
+	opacity: 0.4,       // 40% opaque right up close, whole at 250
+	hideDistance: 32,   // closer than 32 units he is not drawn at all, and no target of your aim
+};
 ```
 
 > [!WARNING]
-> On a server without ReGameDLL a partner standing between a player and a flash blocks its light as anyone does. Walking through, the look and grenades work on every server.
+> On a server without ReGameDLL a partner standing between a player and a flash blocks its light as anyone does. Walking through and the look work on every server; a grenade bounces off a partner.
 
 ### One rule
 

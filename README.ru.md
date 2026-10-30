@@ -29,14 +29,14 @@
 Проекту нужен `@amxts/core` 0.3.3 или новее.
 
 ```bash
-npx amxts module add resemiclip
+npx amxts module add semiclip
 ```
 
 Команда ставит пакет и добавляет его в `amxts.config.ts` проекта:
 
 ```ts
 export default defineConfig({
-	modules: ["@amxts/resemiclip"],
+	modules: ["@amxts/semiclip"],
 });
 ```
 
@@ -105,10 +105,12 @@ server.addCommand("/party", () => {
 
 ### Кто сквозь кого проходит сейчас
 
-Пары — это пары ядра: `player.walksThrough.has(other)` говорит, проходят ли двое сквозь друг друга, а список такой:
+Пары — это пары ядра: `player.walksThrough` — игроки, сквозь которых он проходит, как `Set`:
 
 ```ts
-const partners = server.players.filter(other => player.walksThrough.has(other));
+player.walksThrough.has(other);                  // проходят ли двое сквозь друг друга
+for (const partner of player.walksThrough) { }   // каждый из них
+const partners = [...player.walksThrough];
 ```
 
 ### Как выглядит партнёр
@@ -116,13 +118,15 @@ const partners = server.players.filter(other => player.walksThrough.has(other));
 Игрок, сквозь которого проходишь, вблизи может быть полупрозрачным или не рисоваться совсем, чтобы не закрывать обзор. Это `server.walkThroughLook` ядра — для всех игроков, по умолчанию выключено:
 
 ```ts
-server.walkThroughLook.fadeDistance = 250;  // ближе 250 юнитов партнёр полупрозрачный
-server.walkThroughLook.opacity = 0.4;       // вплотную непрозрачен на 40%, целиком — на 250
-server.walkThroughLook.hideDistance = 32;   // ближе 32 юнитов его не видно совсем
+server.walkThroughLook = {
+	fadeDistance: 250,  // ближе 250 юнитов партнёр полупрозрачный
+	opacity: 0.4,       // вплотную непрозрачен на 40%, целиком — на 250
+	hideDistance: 32,   // ближе 32 юнитов его не видно совсем, и прицел сквозь него
+};
 ```
 
 > [!WARNING]
-> На сервере без ReGameDLL партнёр, который стоит между игроком и флешкой, закрывает её свет, как любой другой. Проход сквозь, вид и гранаты работают на любом сервере.
+> На сервере без ReGameDLL партнёр, который стоит между игроком и флешкой, закрывает её свет, как любой другой. Проход сквозь и вид работают на любом сервере; граната от партнёра отскакивает.
 
 ### Одно правило
 

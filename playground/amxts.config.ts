@@ -1,3 +1,3 @@
 export default defineConfig({
-	modules: ["@amxts/resemiclip"],
+	modules: ["@amxts/semiclip"],
 });

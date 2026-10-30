@@ -3,12 +3,13 @@
 export default {
 	'SemiclipRule': {
 		en: `
-			Whether \`player\` walks through \`target\`. ReSemiclip lets two players
-			through each other only when the rule says so both ways.
+			Whether \`player\` walks through \`target\`. Two players walk through each
+			other when the rule lets either one: \`rule(a, b) || rule(b, a)\`.
 		`,
 		ru: `
-			Проходит ли \`player\` сквозь \`target\`. ReSemiclip пропускает двух игроков
-			друг сквозь друга, только когда правило разрешает это в обе стороны.
+			Проходит ли \`player\` сквозь \`target\`. Два игрока проходят друг сквозь
+			друга, когда правило разрешает это хотя бы в одну сторону:
+			\`rule(a, b) || rule(b, a)\`.
 		`,
 	},
 	'Semiclip': {
@@ -31,20 +32,17 @@ export default {
 	},
 	'Semiclip.rule': {
 		en: `
-			Whether \`player\` walks through \`target\`. Setting it takes the rules over
-			from ReSemiclip and works every pair out; \`null\` gives them back. The
-			pairs are worked out again when a player comes or leaves, spawns, dies or
+			Whether \`player\` walks through \`target\`; a pair walks through when either
+			way says so. Setting it works every pair out; \`null\` makes everyone solid
+			again. The pairs are worked out again when a player comes, spawns, dies or
 			changes sides, and when a field plugins added to \`Player\` changes.
-
-			Pawn: \`resemiclip_take_control\`, \`resemiclip_set_user_mask\`
 		`,
 		ru: `
-			Проходит ли \`player\` сквозь \`target\`. Присваивание забирает правила у
-			ReSemiclip и рассчитывает каждую пару; \`null\` возвращает их. Пары
-			рассчитываются заново, когда игрок заходит или уходит, появляется, умирает
-			или меняет команду и когда меняется поле, которое плагины добавили в \`Player\`.
-
-			Pawn: \`resemiclip_take_control\`, \`resemiclip_set_user_mask\`
+			Проходит ли \`player\` сквозь \`target\`; пара проходит, когда это разрешает
+			хотя бы одна сторона. Присваивание рассчитывает каждую пару; \`null\` снова
+			делает всех твёрдыми. Пары рассчитываются заново, когда игрок заходит,
+			появляется, умирает или меняет команду и когда меняется поле, которое плагины
+			добавили в \`Player\`.
 		`,
 	},
 	'Semiclip.update': {
@@ -59,20 +57,8 @@ export default {
 			собственная запись плагина.
 		`,
 	},
-	'Semiclip.passesThrough': {
-		en: `
-			The players \`player\` walks through: those he is not solid to.
-
-			Pawn: \`resemiclip_get_user_mask\`
-		`,
-		ru: `
-			Игроки, сквозь которых проходит \`player\`: те, для кого он не твёрдый.
-
-			Pawn: \`resemiclip_get_user_mask\`
-		`,
-	},
 	'semiclip': {
-		en: `Who walks through whom: the rule, the pairs worked out again, and what ReSemiclip has.`,
-		ru: `Кто сквозь кого проходит: правило, повторный расчёт пар и то, что сейчас у ReSemiclip.`,
+		en: `Who walks through whom: the rule, and the pairs worked out again.`,
+		ru: `Кто сквозь кого проходит: правило и повторный расчёт пар.`,
 	},
 };

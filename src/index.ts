@@ -8,8 +8,8 @@ import { ClientPutinserverEvent, Player, TeamInfoMessage, game, server } from "@
 import { callingPlugin, onPluginStop } from "@amxts/core/kit";
 
 export default defineModule({
-	meta: { name: "resemiclip" },
-	imports: [{ from: "@amxts/resemiclip", name: "semiclip" }],
+	meta: { name: "semiclip" },
+	imports: [{ from: "@amxts/semiclip", name: "semiclip" }],
 	setup() {
 		server.addEventListener("init", start);
 		server.addEventListener("putInServer", joined);
@@ -22,8 +22,8 @@ export default defineModule({
 });
 
 /**
- * Whether `player` walks through `target`. ReSemiclip lets two players
- * through each other only when the rule says so both ways.
+ * Whether `player` walks through `target`. Two players walk through each
+ * other when the rule lets either one: `rule(a, b) || rule(b, a)`.
  */
 export type SemiclipRule = (player: Player, target: Player) => boolean;
 
@@ -44,12 +44,10 @@ let started = false;
  */
 export class Semiclip {
 	/**
-	 * Whether `player` walks through `target`. Setting it takes the rules over
-	 * from ReSemiclip and works every pair out; `null` gives them back. The
-	 * pairs are worked out again when a player comes or leaves, spawns, dies or
+	 * Whether `player` walks through `target`; a pair walks through when either
+	 * way says so. Setting it works every pair out; `null` makes everyone solid
+	 * again. The pairs are worked out again when a player comes, spawns, dies or
 	 * changes sides, and when a field plugins added to `Player` changes.
-	 *
-	 * Pawn: `resemiclip_take_control`, `resemiclip_set_user_mask`
 	 */
 	get rule() {
 		return current;
@@ -78,7 +76,7 @@ export class Semiclip {
 	}
 }
 
-/** Who walks through whom: the rule, the pairs worked out again, and what ReSemiclip has. */
+/** Who walks through whom: the rule, and the pairs worked out again. */
 export const semiclip = new Semiclip();
 
 /** The plugin that set the rule stopped: its rule goes, and with it its pairs. */

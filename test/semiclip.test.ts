@@ -6,7 +6,7 @@
 import { describe, expect, it } from "vitest";
 import { setup } from "@amxts/core/test-utils";
 
-describe("resemiclip", () => {
+describe("semiclip", () => {
 	it("the rule sets every pair as players come", async () => {
 		const server = await setup({ rootDir: "playground" });
 		const alice = server.join("Alice");
