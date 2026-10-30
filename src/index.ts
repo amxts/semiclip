@@ -9,6 +9,8 @@ import { callingPlugin, onPluginStop } from "@amxts/core/kit";
 
 export default defineModule({
 	meta: { name: "semiclip" },
+	// Teammates walk through each other with no plugin calling it: built whenever the config lists it.
+	standalone: true,
 	imports: [{ from: "@amxts/semiclip", name: "semiclip" }],
 	setup() {
 		// The look until a plugin sets its own: see-through up close, not drawn right against him.

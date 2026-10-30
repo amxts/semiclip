@@ -27,7 +27,7 @@
 
 ## Установка
 
-Проекту нужен `@amxts/core` 0.3.3 или новее.
+Проекту нужен `@amxts/core` 0.3.4 или новее.
 
 ```bash
 npx amxts module add semiclip

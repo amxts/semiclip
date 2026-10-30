@@ -27,7 +27,7 @@ Semiclip lets players walk through each other. amxts does it on the server itsel
 
 ## Installation
 
-The project needs `@amxts/core` 0.3.3 or later.
+The project needs `@amxts/core` 0.3.4 or later.
 
 ```bash
 npx amxts module add semiclip
