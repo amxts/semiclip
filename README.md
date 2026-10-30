@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="assets/logo.svg" width="96" alt="ReSemiclip">
+<img src="assets/logo.svg" width="96" alt="Semiclip">
 
-# ReSemiclip
+# Semiclip
 
 *Who walks through whom, as a rule over two players*
 
@@ -15,18 +15,18 @@
 
 </div>
 
-Semiclip lets players walk through each other. The [ReSemiclip](https://github.com/Next21Team/resemiclip-amxx) module does it on the server; this module lets an amxts plugin say who walks through whom as a rule over two players, `(player, target) => boolean`, and keeps ReSemiclip up to date with it.
+Semiclip lets players walk through each other. amxts does it on the server itself, as [pairs of players](https://amxts.github.io/docs/game/players#walking-through-each-other) (`player.walksThrough`); this module lets a plugin say who walks through whom as a rule over two players, `(player, target) => boolean`, and keeps the pairs up to date with it.
 
 ## Features
 
-- **A rule, not bit masks.** One function says whether one player walks through another; the module works every pair out and tells ReSemiclip.
-- **Kept up to date by itself.** A spawn, a death, a team change, a player coming or leaving, and a change of any field plugins add to `Player` work the pairs out again - only the pairs of the player it happened to.
-- **Missing module said once.** Without ReSemiclip on the server nothing is set, and the console says why, once.
+- **A rule, not pairs by hand.** One function says whether one player walks through another; the module works every pair out.
+- **Kept up to date by itself.** A spawn, a death, a team change, a player coming in, and a change of any field plugins add to `Player` work the pairs out again - only the pairs of the player it happened to.
+- **Nothing else on the server.** No AMX Mod X module is needed: the pairs are amxts's own.
 - **One instance per server.** Every plugin that uses it sets the same rule.
 
 ## Installation
 
-The server needs the ReSemiclip AMX Mod X module (`resemiclip_amxx`).
+The project needs `@amxts/core` 0.3.3 or later.
 
 ```bash
 npx amxts module add resemiclip
@@ -50,7 +50,7 @@ Teammates walk through each other:
 semiclip.rule = (player, target) => player.team == target.team;
 ```
 
-Setting the rule is all it takes: the module works every pair out, and works a player's pairs out again when he spawns, dies, changes sides, comes or leaves. Setting `rule` takes the rules over from ReSemiclip's config; `semiclip.rule = null` gives them back, and so do the plugins' reload, a map change and the plugin that set the rule stopping - unloaded or reloaded - until a rule is set again.
+Setting the rule is all it takes: the module works every pair out, and works a player's pairs out again when he spawns, dies, changes sides or comes in. `semiclip.rule = null` makes everyone solid again, and so does the plugin that set the rule stopping - unloaded or reloaded - until a rule is set again.
 
 ### A rule that changes in play
 
@@ -64,7 +64,7 @@ declare module "@amxts/core" {
 }
 
 semiclip.rule = (player, target) =>
-	player.isAlive && target.isAlive && (player.spawnProtected || target.spawnProtected || player.team == target.team);
+	player.isAlive && target.isAlive && (player.spawnProtected || player.team == target.team);
 
 game.addEventListener("spawn", ({ player }) => {
 	player.spawnProtected = true;                        // walks through everyone for 3 seconds
@@ -82,7 +82,7 @@ The module works the pairs out again by itself when the field changes - on the s
 | a player comes into the game | his |
 | a player spawns, dies or changes sides | his |
 | a field plugins add to `Player` changes on a player - any plugin's, or Pawn's | his |
-| a player leaves | nobody walks through his slot any more |
+| a player leaves | his pairs go with him |
 | `semiclip.update(player)` | `player`'s |
 | `semiclip.update()` | every pair |
 
@@ -99,24 +99,38 @@ server.addCommand("/party", () => {
 });
 ```
 
-### Both ways
+### Either way lets a pair through
 
-`rule(player, target)` says whether `player` walks through `target`. ReSemiclip lets two players through each other only when both ways say so, so a rule that says yes one way and no the other keeps that pair solid. A rule that reads the same both ways - `player.team == target.team`, `player.spawnProtected || target.spawnProtected` - is what makes a pair pass.
+`rule(player, target)` says whether `player` walks through `target`, but a pair is one: two players walk through each other, or neither does. The pair walks through when the rule lets either one - `rule(a, b) || rule(b, a)`. A rule that says yes for a protected player lets him through everyone, and everyone through him, with no `|| target.spawnProtected` needed.
+
+### Who walks through whom now
+
+The pairs are the core's: `player.walksThrough.has(other)` says whether the two walk through each other, and the list is
+
+```ts
+const partners = server.players.filter(other => player.walksThrough.has(other));
+```
+
+### How a partner looks
+
+A player one walks through can be see-through up close, or not drawn at all, so he does not block the view. That is the core's `server.walkThroughLook`, for every player and off by default:
+
+```ts
+server.walkThroughLook.fadeDistance = 250;  // closer than 250 units a partner is see-through
+server.walkThroughLook.opacity = 0.4;       // 40% opaque right up close, whole at 250
+server.walkThroughLook.hideDistance = 32;   // closer than 32 units he is not drawn at all
+```
+
+> [!WARNING]
+> On a server without ReGameDLL a partner standing between a player and a flash blocks its light as anyone does. Walking through, the look and grenades work on every server.
 
 ### One rule
 
 The rule is one for the server. A plugin that sets it over another plugin's replaces it, and the console warns: the last one set is used. Plugins that each have a say write it into fields (`player.spawnProtected`) that one rule reads.
 
-### Without ReSemiclip on the server
-
-Nothing is set: the module does not take the rules, `passesThrough` gives no one, and the console says once that the resemiclip module is not on the server.
-
 ## API
 
 | Member | What it is |
 | --- | --- |
-| `semiclip.rule` | `(player, target) => boolean` - whether `player` walks through `target`. Setting it takes the rules over and works every pair out; `null` gives them back. |
+| `semiclip.rule` | `(player, target) => boolean` - whether `player` walks through `target`; a pair walks through when either way says so. Setting it works every pair out; `null` makes everyone solid again. |
 | `semiclip.update(player?)` | Works `player`'s pairs out again, or everyone's, after something the rule reads changed that the module does not hear. |
-| `semiclip.passesThrough(player)` | The players `player` walks through, as ReSemiclip has it. |
-
-For Pawn plugins, ReSemiclip's own natives (`resemiclip_set_user_mask` and the rest) work as they are.

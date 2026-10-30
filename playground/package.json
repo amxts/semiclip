@@ -2,7 +2,7 @@
 	"name": "resemiclip-playground",
 	"type": "module",
 	"private": true,
-	"description": "A project with ReSemiclip in it: try the module here, and its tests load this project.",
+	"description": "A project with semiclip in it: try the module here, and its tests load this project.",
 	"devDependencies": {
 		"@amxts/resemiclip": "file:.."
 	}
