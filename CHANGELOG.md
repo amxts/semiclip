@@ -4,7 +4,7 @@
 
 > For the 0.3.3 core and the later cores of the 0.3 line.
 
-`@amxts/resemiclip` is `@amxts/semiclip` now, and it needs nothing but amxts. I moved semiclip off the ReSemiclip Metamod plugin: the rule you set drives the core's own pairs, `player.walksThrough`, which the core has since 0.3.3, so a server needs no plugin beside amxts. The rule reads as before:
+`@amxts/resemiclip` is `@amxts/semiclip` now, and it needs nothing but amxts. I moved semiclip off the ReSemiclip Metamod plugin: the rule you set drives the core's own pairs, `player.walksThrough`, which the core has since 0.3.3, so a server needs no plugin beside amxts. And it works as soon as it is installed: teammates walk through each other, see-through up close and not drawn right against you, before any plugin sets a rule. A rule reads as before:
 
 ```ts
 semiclip.rule = (player, target) => player.team == target.team;
@@ -21,7 +21,7 @@ server.walkThroughLook = { fadeDistance: 250, opacity: 0.4, hideDistance: 48 };
 - The package is `@amxts/semiclip`: `npx amxts upgrade` puts it in place of `@amxts/resemiclip` in `package.json` and `amxts.config.ts`, and rewrites a plugin's `import ... from "@amxts/resemiclip"`. The global `semiclip` keeps its name, so most plugins do not change.
 - `semiclip.passesThrough(player)` is gone: write `[...player.walksThrough]`.
 - It needs `@amxts/core` 0.3.3.
-- `semiclip.rule = null`, and the rule's plugin stopping, make everyone solid: nothing hands the rules back to ReSemiclip any more.
+- With no rule of a plugin's, teammates walk through each other and the look is on (`server.walkThroughLook = { fadeDistance: 250, opacity: 0.4, hideDistance: 48 }`). When the rule's plugin stops, teammates walk through each other again; `semiclip.rule = null` makes everyone solid. Nothing hands the rules back to ReSemiclip any more.
 
 ### 👉 Changelog
 
@@ -31,6 +31,7 @@ server.walkThroughLook = { fadeDistance: 250, opacity: 0.4, hideDistance: 48 };
 
 - ⚠️  Semiclip on the core's own pairs ([8a828bd](https://github.com/amxts/semiclip/commit/8a828bd))
 - ⚠️  The module is semiclip, `@amxts/semiclip` ([f64ac55](https://github.com/amxts/semiclip/commit/f64ac55))
+- Teammates walk through each other by default ([3fd6edc](https://github.com/amxts/semiclip/commit/3fd6edc))
 
 #### ⚠️ Breaking Changes
 
