@@ -45,7 +45,7 @@ export default defineConfig({
 
 A plugin uses the module as `semiclip`, without an import line: the build adds the import to the plugins that use it, and builds the module only when some plugin does.
 
-Installed, the module needs no plugin: teammates walk through each other, and a partner is see-through closer than 250 units fades out and is not drawn closer than 48 (the core's [`server.walkThroughLook`](#how-a-partner-looks)). A plugin changes who walks through whom with a rule - everyone through everyone, on a KZ server:
+Installed, the module needs no plugin: teammates walk through each other, and a partner is see-through closer than 250 units fades out and is not drawn closer than 60 (the core's [`server.walkThroughLook`](#how-a-partner-looks)). A plugin changes who walks through whom with a rule - everyone through everyone, on a KZ server:
 
 ```ts
 semiclip.rule = () => true;
@@ -121,8 +121,8 @@ A player one walks through can be see-through up close, or not drawn at all, so 
 ```ts
 server.walkThroughLook = {
 	fadeDistance: 250,  // closer than 250 units a partner is see-through
-	opacity: 0.4,       // 40% opaque at 48 units, whole at 250
-	hideDistance: 48,   // closer than 48 units he fades out, is not drawn, and is no target of your aim
+	opacity: 0.4,       // 40% opaque at 60 units, whole at 250
+	hideDistance: 60,   // closer than 60 units he fades out, is not drawn, and is no target of your aim
 };
 ```
 

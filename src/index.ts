@@ -23,7 +23,7 @@ export default defineModule<SemiclipOptions>({
 	imports: [{ from: "@amxts/semiclip", name: "semiclip" }],
 	setup(options) {
 		// The look until a plugin sets its own: see-through up close, not drawn right against him.
-		server.walkThroughLook = { fadeDistance: 250, opacity: 0.4, hideDistance: 48 };
+		server.walkThroughLook = { fadeDistance: 250, opacity: 0.4, hideDistance: 60 };
 		server.walkThroughOptions = { grenades: options.grenades, standOnHead: options.standOnHead };
 		server.addEventListener("init", start);
 		server.addEventListener("putInServer", joined);
