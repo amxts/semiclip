@@ -129,6 +129,6 @@ describe("semiclip", () => {
 
 		expect(server.walksThrough(alice.id)).toEqual([bob.id]);
 		expect(server.walksThrough(carl.id)).toEqual([]);
-		expect(server.walkThroughLook).toEqual({ fadeDistance: 250, opacity: 0.4, hideDistance: 48 });
+		expect(server.walkThroughLook).toEqual({ fadeDistance: 250, opacity: 0.4, hideDistance: 60 });
 	}, 120_000);
 });
