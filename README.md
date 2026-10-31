@@ -19,7 +19,7 @@ Semiclip lets players walk through each other. amxts does it on the server itsel
 
 ## Features
 
-- **Works as soon as it is installed.** Teammates walk through each other, see-through up close and not drawn right against you, before any plugin says a word.
+- **Works as soon as it is installed.** Teammates walk through each other, see-through up close and not drawn right against you; a teammate's grenade flies through you, and you stand on a teammate's head - before any plugin says a word.
 - **A rule, not pairs by hand.** One function says whether one player walks through another; the module works every pair out.
 - **Kept up to date by itself.** A spawn, a death, a team change, a player coming in, and a change of any field plugins add to `Player` work the pairs out again - only the pairs of the player it happened to.
 - **Nothing else on the server.** No AMX Mod X module is needed: the pairs are amxts's own.
@@ -27,7 +27,7 @@ Semiclip lets players walk through each other. amxts does it on the server itsel
 
 ## Installation
 
-The project needs `@amxts/core` 0.3.4 or later.
+The project needs `@amxts/core` 0.3.5 or later.
 
 ```bash
 npx amxts module add semiclip
@@ -126,8 +126,21 @@ server.walkThroughLook = {
 };
 ```
 
-> [!WARNING]
-> On a server without ReGameDLL a partner standing between a player and a flash blocks its light as anyone does. Walking through and the look work on every server; a grenade bounces off a partner.
+### Grenades and standing on a head
+
+A grenade flies through the partners of the player who threw it, and a player wholly above a partner stands on his head instead of falling through him. Both are on; the project turns them off in `amxts.config.ts`:
+
+```ts
+export default defineConfig({
+	modules: ["@amxts/semiclip"],
+	semiclip: {
+		grenades: false,     // a grenade bounces off a partner of its thrower
+		standOnHead: false,  // a partner above falls through
+	},
+});
+```
+
+A shot, a flash's light and an explosion stop at a partner as at anyone. All of it works on every server, with ReHLDS and ReGameDLL or without them.
 
 ### One rule
 

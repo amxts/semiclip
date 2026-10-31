@@ -1,6 +1,18 @@
 // The tooltips of src/index.ts, in both languages: scripts/apply-docs.ts writes the
 // one AMXTS_DOCS_LANG picks into the JSDoc above each element.
 export default {
+	'SemiclipOptions': {
+		en: `The project's options, \`semiclip: { ... }\` in \`amxts.config.ts\`.`,
+		ru: `Настройки проекта, \`semiclip: { ... }\` в \`amxts.config.ts\`.`,
+	},
+	'SemiclipOptions.grenades': {
+		en: `Whether a grenade passes the players its thrower walks through.`,
+		ru: `Пролетает ли граната сквозь игроков, сквозь которых проходит бросивший её.`,
+	},
+	'SemiclipOptions.standOnHead': {
+		en: `Whether a player wholly above one he walks through stands on him, instead of falling through.`,
+		ru: `Стоит ли игрок, целиком оказавшийся над тем, сквозь кого проходит, у него на голове, а не проваливается.`,
+	},
 	'SemiclipRule': {
 		en: `
 			Whether \`player\` walks through \`target\`. Two players walk through each

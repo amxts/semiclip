@@ -7,14 +7,24 @@
 import { ClientPutinserverEvent, Player, TeamInfoMessage, game, server } from "@amxts/core";
 import { callingPlugin, onPluginStop } from "@amxts/core/kit";
 
-export default defineModule({
-	meta: { name: "semiclip" },
+/** The project's options, `semiclip: { ... }` in `amxts.config.ts`. */
+export interface SemiclipOptions {
+	/** Whether a grenade passes the players its thrower walks through. */
+	grenades: boolean;
+	/** Whether a player wholly above one he walks through stands on him, instead of falling through. */
+	standOnHead: boolean;
+}
+
+export default defineModule<SemiclipOptions>({
+	meta: { name: "semiclip", configKey: "semiclip" },
+	defaults: { grenades: true, standOnHead: true },
 	// Teammates walk through each other with no plugin calling it: built whenever the config lists it.
 	standalone: true,
 	imports: [{ from: "@amxts/semiclip", name: "semiclip" }],
-	setup() {
+	setup(options) {
 		// The look until a plugin sets its own: see-through up close, not drawn right against him.
 		server.walkThroughLook = { fadeDistance: 250, opacity: 0.4, hideDistance: 48 };
+		server.walkThroughOptions = { grenades: options.grenades, standOnHead: options.standOnHead };
 		server.addEventListener("init", start);
 		server.addEventListener("putInServer", joined);
 		server.addMessageListener("team", teamChanged);
@@ -24,6 +34,12 @@ export default defineModule({
 		onPluginStop(stopped);
 	},
 });
+
+declare module "@amxts/core" {
+	interface ModuleOptions {
+		semiclip?: Partial<SemiclipOptions>;
+	}
+}
 
 /**
  * Whether `player` walks through `target`. Two players walk through each

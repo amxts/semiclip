@@ -21,6 +21,11 @@ describe("semiclip", () => {
 		expect(server.log).toContain("Bob walks through: Alice");
 	}, 120_000);
 
+	it("the project's options go to the core, the ones left out by default", async () => {
+		const server = await setup({ rootDir: "playground" });
+		expect(server.walkThroughOptions).toEqual({ grenades: false, standOnHead: true });
+	}, 120_000);
+
 	it("a field written, a team changed, a death, a spawn and a player leaving are heard without update()", async () => {
 		const server = await setup({ rootDir: "playground" });
 		const alice = server.join("Alice");
