@@ -1,7 +1,7 @@
 {
 	"name": "@amxts/semiclip",
 	"type": "module",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "Who walks through whom, for amxts plugins: semiclip as a rule over two players, on the core's own pairs.",
 	"author": {
 		"name": "kukson777",
@@ -30,7 +30,7 @@
 		"src"
 	],
 	"amxts": {
-		"core": "^0.3.4",
+		"core": "^0.3.5",
 		"module": "src/index.ts"
 	},
 	"scripts": {
