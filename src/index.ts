@@ -5,7 +5,7 @@
  * How to use it: README.md.
  */
 import { ClientPutinserverEvent, Player, TeamInfoMessage, game, server } from "@amxts/core";
-import { callingPlugin, onPluginStop } from "@amxts/core/kit";
+import { callingPlugin, onPluginStop, setWalkThroughOptions } from "@amxts/core/kit";
 
 /** The project's options, `semiclip: { ... }` in `amxts.config.ts`. */
 export interface SemiclipOptions {
@@ -24,7 +24,7 @@ export default defineModule<SemiclipOptions>({
 	setup(options) {
 		// The look until a plugin sets its own: see-through up close, not drawn right against him.
 		server.walkThroughLook = { fadeDistance: 250, opacity: 0.4, hideDistance: 60 };
-		server.walkThroughOptions = { grenades: options.grenades, standOnHead: options.standOnHead };
+		setWalkThroughOptions({ grenades: options.grenades, standOnHead: options.standOnHead });
 		server.addEventListener("init", start);
 		server.addEventListener("putInServer", joined);
 		server.addMessageListener("team", teamChanged);
