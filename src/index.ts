@@ -1,11 +1,11 @@
 /**
  * Semiclip for amxts plugins: who walks through whom, as a rule over two
- * players. The core keeps the pairs (`player.walksThrough`); this module asks
+ * players. The core keeps the pairs (the kit's `walksThrough`); this module asks
  * the rule and sets them, again whenever what the rule reads may have changed.
  * How to use it: README.md.
  */
 import { ClientPutinserverEvent, Player, TeamInfoMessage, game, server } from "@amxts/core";
-import { callingPlugin, onPluginStop, setWalkThroughOptions } from "@amxts/core/kit";
+import { callingPlugin, onPluginStop, setWalkThroughOptions, walksThrough } from "@amxts/core/kit";
 
 /** The project's options, `semiclip: { ... }` in `amxts.config.ts`. */
 export interface SemiclipOptions {
@@ -13,18 +13,28 @@ export interface SemiclipOptions {
 	grenades: boolean;
 	/** Whether a player wholly above one he walks through stands on him, instead of falling through. */
 	standOnHead: boolean;
+	/** Closer than this, in units, a partner is see-through; `0` is off. */
+	fadeDistance: number;
+	/** How opaque a partner is at `hideDistance`, `0` to `1`: he grows to whole at `fadeDistance`. */
+	opacity: number;
+	/** Closer than this, in units, a partner fades out, is not drawn, and is no target of one's aim; `0` is off. */
+	hideDistance: number;
 }
 
 export default defineModule<SemiclipOptions>({
 	meta: { name: "semiclip", configKey: "semiclip" },
-	defaults: { grenades: true, standOnHead: true },
+	defaults: { grenades: true, standOnHead: true, fadeDistance: 250, opacity: 0.4, hideDistance: 60 },
 	// Teammates walk through each other with no plugin calling it: built whenever the config lists it.
 	standalone: true,
 	imports: [{ from: "@amxts/semiclip", name: "semiclip" }],
 	setup(options) {
-		// The look until a plugin sets its own: see-through up close, not drawn right against him.
-		server.walkThroughLook = { fadeDistance: 250, opacity: 0.4, hideDistance: 60 };
-		setWalkThroughOptions({ grenades: options.grenades, standOnHead: options.standOnHead });
+		setWalkThroughOptions({
+			grenades: options.grenades,
+			standOnHead: options.standOnHead,
+			fadeDistance: options.fadeDistance,
+			opacity: options.opacity,
+			hideDistance: options.hideDistance,
+		});
 		server.addEventListener("init", start);
 		server.addEventListener("putInServer", joined);
 		server.addMessageListener("team", teamChanged);
@@ -154,11 +164,11 @@ function updatePlayer(player: Player, rule: SemiclipRule) {
 
 /** Sets whether `a` and `b` walk through each other: when the rule lets either one. */
 function pair(a: Player, b: Player, rule: SemiclipRule) {
-	if (rule(a, b) || rule(b, a)) a.walksThrough.add(b);
-	else a.walksThrough.delete(b);
+	if (rule(a, b) || rule(b, a)) walksThrough(a).add(b);
+	else walksThrough(a).delete(b);
 }
 
 /** No rule any more: everyone is solid again. */
 function clearAll() {
-	for (const player of server.players) player.walksThrough.clear();
+	for (const player of server.players) walksThrough(player).clear();
 }

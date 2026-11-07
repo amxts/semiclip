@@ -16,6 +16,7 @@ game.addEventListener("spawn", ({ player }) => {
 server.addCommand("/through", ({ player }) => list(player));
 
 function list(player: Player) {
-	const names = server.players.filter(other => player.walksThrough.has(other)).map(other => other.name);
+	const rule = semiclip.rule;
+	const names = server.players.filter(other => other.id != player.id && rule != null && (rule(player, other) || rule(other, player))).map(other => other.name);
 	console.log(`${player.name} walks through: ${names.join(", ")}`);
 }

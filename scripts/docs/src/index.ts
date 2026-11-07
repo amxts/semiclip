@@ -13,6 +13,18 @@ export default {
 		en: `Whether a player wholly above one he walks through stands on him, instead of falling through.`,
 		ru: `Стоит ли игрок, целиком оказавшийся над тем, сквозь кого проходит, у него на голове, а не проваливается.`,
 	},
+	'SemiclipOptions.fadeDistance': {
+		en: `Closer than this, in units, a partner is see-through; \`0\` is off.`,
+		ru: `Ближе этого расстояния, в юнитах, партнёр полупрозрачен; \`0\` — выключено.`,
+	},
+	'SemiclipOptions.opacity': {
+		en: `How opaque a partner is at \`hideDistance\`, \`0\` to \`1\`: he grows to whole at \`fadeDistance\`.`,
+		ru: `Насколько партнёр непрозрачен на \`hideDistance\`, от \`0\` до \`1\`: к \`fadeDistance\` он становится целым.`,
+	},
+	'SemiclipOptions.hideDistance': {
+		en: `Closer than this, in units, a partner fades out, is not drawn, and is no target of one's aim; \`0\` is off.`,
+		ru: `Ближе этого расстояния, в юнитах, партнёр исчезает, не рисуется и не служит целью прицела; \`0\` — выключено.`,
+	},
 	'SemiclipRule': {
 		en: `
 			Whether \`player\` walks through \`target\`. Two players walk through each

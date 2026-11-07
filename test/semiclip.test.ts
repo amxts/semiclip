@@ -1,8 +1,8 @@
 // Semiclip on the fake server: the playground's spawn protection plugin sets a
 // rule - teammates walk through each other, a player just spawned through
 // everyone alive for 3 seconds - and the module works the pairs out, again
-// whenever something the rule reads changes. The pairs are the core's,
-// `player.walksThrough`, read here as server.walksThrough(id).
+// whenever something the rule reads changes. The pairs are the core's, read
+// here as server.walksThrough(id).
 import { describe, expect, it } from "vitest";
 import { setup } from "@amxts/core/test-utils";
 

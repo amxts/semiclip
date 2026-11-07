@@ -15,7 +15,7 @@
 
 </div>
 
-Semiclip lets players walk through each other. amxts does it on the server itself, as [pairs of players](https://amxts.github.io/docs/game/players#walking-through-each-other) (`player.walksThrough`); this module lets a plugin say who walks through whom as a rule over two players, `(player, target) => boolean`, and keeps the pairs up to date with it.
+Semiclip lets players walk through each other. amxts does it on the server itself, as pairs of players; this module lets a plugin say who walks through whom as a rule over two players, `(player, target) => boolean`, and keeps the pairs up to date with it.
 
 ## Features
 
@@ -45,7 +45,7 @@ export default defineConfig({
 
 A plugin uses the module as `semiclip`, without an import line: the build adds the import to the plugins that use it, and builds the module only when some plugin does.
 
-Installed, the module needs no plugin: teammates walk through each other, and a partner is see-through closer than 250 units fades out and is not drawn closer than 60 (the core's [`server.walkThroughLook`](#how-a-partner-looks)). A plugin changes who walks through whom with a rule - everyone through everyone, on a KZ server:
+Installed, the module needs no plugin: teammates walk through each other, and a partner is see-through closer than 250 units fades out and is not drawn closer than 60 ([the project's options](#the-projects-options)). A plugin changes who walks through whom with a rule - everyone through everyone, on a KZ server:
 
 ```ts
 semiclip.rule = () => true;
@@ -104,44 +104,24 @@ server.addCommand("/party", () => {
 
 `rule(player, target)` says whether `player` walks through `target`, but a pair is one: two players walk through each other, or neither does. The pair walks through when the rule lets either one - `rule(a, b) || rule(b, a)`. A rule that says yes for a protected player lets him through everyone, and everyone through him, with no `|| target.spawnProtected` needed.
 
-### Who walks through whom now
+### The project's options
 
-The pairs are the core's: `player.walksThrough` is the players he walks through, as a `Set`:
-
-```ts
-player.walksThrough.has(other);                  // whether the two walk through each other
-for (const partner of player.walksThrough) { }   // each of them
-const partners = [...player.walksThrough];
-```
-
-### How a partner looks
-
-A player one walks through can be see-through up close, or not drawn at all, so he does not block the view. That is the core's `server.walkThroughLook`, for every player: off in the core, and the module turns it on as below. A plugin sets its own, or `{ fadeDistance: 0, hideDistance: 0 }` to turn it off:
-
-```ts
-server.walkThroughLook = {
-	fadeDistance: 250,  // closer than 250 units a partner is see-through
-	opacity: 0.4,       // 40% opaque at 60 units, whole at 250
-	hideDistance: 60,   // closer than 60 units he fades out, is not drawn, and is no target of your aim
-};
-```
-
-### Grenades and standing on a head
-
-A grenade flies through the partners of the player who threw it, and a player wholly above a partner stands on his head instead of falling through him. Both are on; the project turns them off in `amxts.config.ts`:
+A partner is see-through up close and not drawn right against you, so he does not block the view; a grenade flies through the partners of the player who threw it; and a player wholly above a partner stands on his head instead of falling through him. The project sets all of it in `amxts.config.ts` - the values below are the defaults:
 
 ```ts
 export default defineConfig({
 	modules: ["@amxts/semiclip"],
 	semiclip: {
-		grenades: false,     // a grenade bounces off a partner of its thrower
-		standOnHead: false,  // a partner above falls through
+		fadeDistance: 250,  // closer than 250 units a partner is see-through; 0 is off
+		opacity: 0.4,       // 40% opaque at hideDistance, whole at fadeDistance
+		hideDistance: 60,   // closer than 60 units he fades out, is not drawn, and is no target of your aim; 0 is off
+		grenades: true,     // false: a grenade bounces off a partner of its thrower
+		standOnHead: true,  // false: a partner above falls through
 	},
 });
 ```
 
 A shot, a flash's light and an explosion stop at a partner as at anyone. All of it works on every server, with ReHLDS and ReGameDLL or without them.
-
 ### One rule
 
 The rule is one for the server. A plugin that sets it over another plugin's replaces it, and the console warns: the last one set is used. Plugins that each have a say write it into fields (`player.spawnProtected`) that one rule reads.
