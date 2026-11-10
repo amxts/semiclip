@@ -120,6 +120,20 @@ describe("semiclip", () => {
 		expect(server.log).not.toContain("a rule was set over another one");
 	}, 120_000);
 
+	it("a plugin turns standing on a head off while it runs; when it stops, the project's comes back", async () => {
+		const server = await setup({ rootDir: "playground" });
+		const rules = await server.load("test/rules.ts");
+		const alice = server.join("Alice");
+		expect(server.walkThroughOptions.standOnHead).toBe(true);
+
+		alice.say("/nohead");
+		expect(server.log).toContain("standOnHead false");
+		expect(server.walkThroughOptions).toEqual({ grenades: false, standOnHead: false });
+
+		server.unload(rules);
+		expect(server.walkThroughOptions).toEqual({ grenades: false, standOnHead: true });
+	}, 120_000);
+
 	it("with no plugin's rule, teammates walk through each other, and the look is on", async () => {
 		const server = await setup({ rootDir: "playground" });
 		server.unload(server.plugins.find(plugin => plugin.source.endsWith("spawn-protection.ts"))!);

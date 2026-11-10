@@ -71,6 +71,27 @@ export default {
 			добавили в \`Player\`.
 		`,
 	},
+	'Semiclip.standOnHead': {
+		en: `
+			Whether a player wholly above one he walks through stands on him, instead
+			of falling through; the project's \`standOnHead\` until a plugin sets it.
+			A plugin's setting holds while it runs: when it stops, the project's comes back.
+
+			\`\`\`ts
+			semiclip.standOnHead = false; // no boosts on a partner's head while this plugin runs
+			\`\`\`
+		`,
+		ru: `
+			Стоит ли игрок, целиком оказавшийся над тем, сквозь кого проходит, у него
+			на голове, а не проваливается; \`standOnHead\` проекта, пока плагин его не
+			задал. Заданное плагином действует, пока он работает: когда он
+			останавливается, возвращается настройка проекта.
+
+			\`\`\`ts
+			semiclip.standOnHead = false; // пока работает этот плагин, буста с головы партнёра нет
+			\`\`\`
+		`,
+	},
 	'Semiclip.update': {
 		en: `
 			Works the pairs out again - \`player\`'s, or everyone's - after something

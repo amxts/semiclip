@@ -28,6 +28,8 @@ export default defineModule<SemiclipOptions>({
 	standalone: true,
 	imports: [{ from: "@amxts/semiclip", name: "semiclip" }],
 	setup(options) {
+		projectStandOnHead = options.standOnHead;
+		standOnHead = options.standOnHead;
 		setWalkThroughOptions({
 			grenades: options.grenades,
 			standOnHead: options.standOnHead,
@@ -64,6 +66,12 @@ let current: SemiclipRule | null = teammates;
 /** The plugin that set the rule, as `callingPlugin()` numbers it; 0 for the module's own. */
 let currentFrom = 0;
 
+/** `standOnHead` of the project's options, and the one in force: a plugin may set it for as long as it runs. */
+let projectStandOnHead = true;
+let standOnHead = true;
+/** The plugin that set `standOnHead`; 0 for the project's. */
+let standOnHeadFrom = 0;
+
 /** The server is up. A rule set while the plugins are still loading waits for it. */
 let started = false;
 
@@ -98,6 +106,24 @@ export class Semiclip {
 	}
 
 	/**
+	 * Whether a player wholly above one he walks through stands on him, instead
+	 * of falling through; the project's `standOnHead` until a plugin sets it.
+	 * A plugin's setting holds while it runs: when it stops, the project's comes back.
+	 *
+	 * ```ts
+	 * semiclip.standOnHead = false; // no boosts on a partner's head while this plugin runs
+	 * ```
+	 */
+	get standOnHead() {
+		return standOnHead;
+	}
+
+	set standOnHead(on: boolean) {
+		standOnHeadFrom = callingPlugin();
+		setStandOnHead(on);
+	}
+
+	/**
 	 * Works the pairs out again - `player`'s, or everyone's - after something
 	 * the rule reads changed that the module does not hear: a round's mode, a
 	 * plugin's own record.
@@ -113,8 +139,17 @@ export class Semiclip {
 /** Who walks through whom: the rule, and the pairs worked out again. */
 export const semiclip = new Semiclip();
 
-/** The plugin that set the rule stopped: its rule goes, and the module's own, teammates, comes back. */
+function setStandOnHead(on: boolean) {
+	standOnHead = on;
+	setWalkThroughOptions({ standOnHead: on });
+}
+
+/** A plugin stopped: what it set goes - its rule for the module's own, teammates, its `standOnHead` for the project's. */
 function stopped(plugin: number) {
+	if (standOnHeadFrom != 0 && standOnHeadFrom == plugin) {
+		standOnHeadFrom = 0;
+		setStandOnHead(projectStandOnHead);
+	}
 	if (currentFrom == 0 || currentFrom != plugin) return;
 	current = teammates;
 	currentFrom = 0;

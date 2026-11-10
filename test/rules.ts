@@ -20,6 +20,11 @@ server.addCommand("/oneway", () => {
 	semiclip.rule = player => player.name == "Alice";
 });
 
+server.addCommand("/nohead", () => {
+	semiclip.standOnHead = false;
+	console.log(`standOnHead ${semiclip.standOnHead}`);
+});
+
 server.addCommand("/release", () => {
 	semiclip.rule = null;
 });

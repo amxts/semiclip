@@ -122,6 +122,17 @@ export default defineConfig({
 ```
 
 A shot, a flash's light and an explosion stop at a partner as at anyone. All of it works on every server, with ReHLDS and ReGameDLL or without them.
+
+### Standing on a head in one mode only
+
+A plugin sets `semiclip.standOnHead` for as long as it runs. A server with several modes keeps head boosts in one and turns them off in another, through the plugin of that mode:
+
+```ts
+semiclip.standOnHead = false; // while this plugin runs, a partner above falls through
+```
+
+When the plugin stops - it is unloaded, or the mode changes and it is not loaded - the project's `standOnHead` comes back.
+
 ### One rule
 
 The rule is one for the server. A plugin that sets it over another plugin's replaces it, and the console warns: the last one set is used. Plugins that each have a say write it into fields (`player.spawnProtected`) that one rule reads.
@@ -131,4 +142,5 @@ The rule is one for the server. A plugin that sets it over another plugin's repl
 | Member | What it is |
 | --- | --- |
 | `semiclip.rule` | `(player, target) => boolean` - whether `player` walks through `target`; a pair walks through when either way says so. Setting it works every pair out; `null` makes everyone solid again. |
+| `semiclip.standOnHead` | `boolean` - whether a player wholly above a partner stands on him; the project's option until a plugin sets it, and again when that plugin stops. |
 | `semiclip.update(player?)` | Works `player`'s pairs out again, or everyone's, after something the rule reads changed that the module does not hear. |
