@@ -75,6 +75,13 @@ let standOnHeadFrom = 0;
 /** The server is up. A rule set while the plugins are still loading waits for it. */
 let started = false;
 
+/** Players whose pairs need a recheck, flushed at the start of the next frame. */
+let dirty: Set<number> | null = null;
+/** All pairs need a recheck: a rule changed, or the server started. */
+let dirtyAll = false;
+/** A flush is already scheduled for this frame. */
+let flushScheduled = false;
+
 /**
  * Who walks through whom, set as a rule over two players - `semiclip`, which
  * plugins use without an import:
@@ -101,7 +108,7 @@ export class Semiclip {
 		current = rule;
 		currentFrom = callingPlugin();
 		if (!started) return;
-		if (rule != null) updateAll(rule);
+		if (rule != null) markAll();
 		else if (had) clearAll();
 	}
 
@@ -129,10 +136,8 @@ export class Semiclip {
 	 * plugin's own record.
 	 */
 	update(player?: Player) {
-		const rule = activeRule();
-		if (rule == null) return;
-		if (player) updatePlayer(player, rule);
-		else updateAll(rule);
+		if (player) changed(player);
+		else markAll();
 	}
 }
 
@@ -153,13 +158,12 @@ function stopped(plugin: number) {
 	if (currentFrom == 0 || currentFrom != plugin) return;
 	current = teammates;
 	currentFrom = 0;
-	if (started) updateAll(teammates);
+	if (started) markAll();
 }
 
 function start() {
 	started = true;
-	const rule = current;
-	if (rule != null) updateAll(rule);
+	if (current != null) markAll();
 }
 
 /** The rule, while the module sets the pairs: the server is up and a rule is set. */
@@ -178,10 +182,41 @@ function teamChanged(event: TeamInfoMessage) {
 	if (event.player == null && target != null) changed(target);
 }
 
-/** Something the rule may read changed on `player`: his pairs. */
+/** Something the rule may read changed on `player`: his pairs, deferred to the frame. */
 function changed(player: Player) {
+	if (!started || current == null) return;
+	if (dirtyAll) return;
+	if (dirty == null) dirty = new Set();
+	dirty.add(player.id);
+	scheduleFlush();
+}
+
+/** All pairs to be rechecked, deferred to the frame. */
+function markAll() {
+	if (!started || current == null) return;
+	dirtyAll = true;
+	dirty = null;
+	scheduleFlush();
+}
+
+function scheduleFlush() {
+	if (flushScheduled) return;
+	flushScheduled = true;
+	server.addEventListener("frame", flush, true);
+}
+
+function flush() {
+	flushScheduled = false;
+	server.removeEventListener("frame", flush);
 	const rule = activeRule();
-	if (rule != null) updatePlayer(player, rule);
+	if (rule == null) { dirtyAll = false; dirty = null; return; }
+	if (dirtyAll) {
+		dirtyAll = false;
+		updateAll(rule);
+	} else if (dirty != null) {
+		for (const id of dirty) updatePlayer(new Player(id), rule);
+	}
+	dirty = null;
 }
 
 function updateAll(rule: SemiclipRule) {
