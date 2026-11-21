@@ -1,5 +1,89 @@
 # Changelog
 
+## v0.2.2
+
+> For the 0.3.5 core and the later cores of the 0.3 line.
+
+#### 💣 Grenades fly through partners
+
+A grenade one partner threw bounced off the other. Now it flies through the partners of the player who threw it, on every server, with ReHLDS and ReGameDLL or without them.
+
+#### 🧍 Standing on a head
+
+A player who jumped on a partner's head fell through him. Now a player wholly above a partner stands on him, and each sees the other whole while he does. Two who are already in each other still pass, so nobody gets stuck.
+
+Both are on, and the project turns them off in `amxts.config.ts`:
+
+```ts
+export default defineConfig({
+	modules: ["@amxts/semiclip"],
+	semiclip: {
+		grenades: false,     // a grenade bounces off a partner of its thrower
+		standOnHead: false,  // a partner above falls through
+	},
+});
+```
+
+#### 🎮 Head boosts in one mode only
+
+A plugin can turn standing on a head off for as long as it runs, so a server with several modes keeps head boosts in one and not in another:
+
+```ts
+semiclip.standOnHead = false; // while this plugin runs, a partner above falls through
+```
+
+When the plugin stops, the project's `standOnHead` comes back.
+
+#### 👻 The look, in the project's options
+
+A partner fades out smoothly: he is whole at `fadeDistance`, as opaque as `opacity` at `hideDistance`, and closer than that he goes to nothing in a tenth of a second and comes back as you step away, instead of vanishing at once. He is blended as a whole, so a faint partner leaves no light outline. The module's look now hides him closer than 60 units instead of 48, and the project sets it in `amxts.config.ts` beside the rest, instead of a plugin setting the core's `server.walkThroughLook`:
+
+```ts
+export default defineConfig({
+	modules: ["@amxts/semiclip"],
+	semiclip: {
+		fadeDistance: 250,  // closer than 250 units a partner is see-through
+		opacity: 0.4,       // 40% opaque at hideDistance, whole at fadeDistance
+		hideDistance: 60,   // closer than 60 units he fades out and is not drawn at all
+	},
+});
+```
+
+#### ⚠️ Breaking changes
+
+`player.walksThrough` and `server.walkThroughLook` left the core's plugin API in 0.3.5. A plugin asks who walks through whom with `semiclip.rule`, and the look is the project's `semiclip: { ... }`.
+
+### 👉 Changelog
+
+[compare changes](https://github.com/amxts/semiclip/compare/v0.2.1...v0.2.2)
+
+### 🚀 Enhancements
+
+- Grenades and standing on a partner's head as options ([92e6bec](https://github.com/amxts/semiclip/commit/92e6bec))
+- A partner hidden closer than 60 units ([949d4f9](https://github.com/amxts/semiclip/commit/949d4f9))
+- ⚠️  The look in the project's options ([8404254](https://github.com/amxts/semiclip/commit/8404254))
+- `semiclip.standOnHead` set by a plugin while it runs ([431107d](https://github.com/amxts/semiclip/commit/431107d))
+
+### 🩹 Fixes
+
+- Defer pair updates to the next frame ([1d0c279](https://github.com/amxts/semiclip/commit/1d0c279))
+
+### 💅 Refactors
+
+- The options through the core's kit ([c15a2f3](https://github.com/amxts/semiclip/commit/c15a2f3))
+
+### 📖 Documentation
+
+- A partner fades out closer than `hideDistance` ([3c785e6](https://github.com/amxts/semiclip/commit/3c785e6))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  The look in the project's options ([8404254](https://github.com/amxts/semiclip/commit/8404254))
+
+### ❤️ Contributors
+
+- Ernest Manukyan ([@kukson777](https://github.com/kukson777))
+
 ## v0.2.1
 
 > For the 0.3.4 core and the later cores of the 0.3 line.
